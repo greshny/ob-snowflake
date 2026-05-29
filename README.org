@@ -1,0 +1,106 @@
+#+title: ob-snowflake
+
+Org Babel support for running Snowflake SQL blocks through the Snowflake CLI.
+
+* Requirements
+
+- Emacs 27.1 or newer
+- Org 9.5 or newer
+- Snowflake CLI available as =snow=
+- A configured Snowflake CLI connection
+
+This package does not manage Snowflake credentials. Configure authentication and
+connections with the Snowflake CLI.
+
+* Snowflake CLI
+
+Install Snowflake CLI with Homebrew:
+
+#+begin_src sh
+brew tap snowflakedb/snowflake-cli
+brew update
+brew install snowflake-cli
+snow --help
+#+end_src
+
+Official Snowflake CLI documentation:
+
+- [[https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation][Installing Snowflake CLI]]
+- [[https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli][Configuring Snowflake CLI]]
+- [[https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections][Managing Snowflake connections]]
+
+Snowflake CLI reads connections from =config.toml=. If =~/.snowflake= exists,
+the default file is =~/.snowflake/config.toml=. Otherwise, on macOS the default
+file is =~/Library/Application Support/snowflake/config.toml=. You can also use
+=--config-file= or =SNOWFLAKE_HOME=.
+
+Example =~/.snowflake/config.toml=:
+
+#+begin_src toml
+default_connection_name = "default"
+
+[connections.default]
+account = "myorganization-myaccount"
+user = "jdoe"
+role = "ANALYST"
+warehouse = "COMPUTE_WH"
+database = "EXAMPLE_DB"
+schema = "PUBLIC"
+authenticator = "EXTERNALBROWSER"
+#+end_src
+
+On macOS and Linux, Snowflake CLI requires the configuration file to be readable
+and writable only by the owner:
+
+#+begin_src sh
+chmod 0600 ~/.snowflake/config.toml
+#+end_src
+
+Test the connection before using it from Org:
+
+#+begin_src sh
+snow connection test --connection default
+snow sql --connection default -q "select current_user(), current_role(), current_warehouse();"
+#+end_src
+
+* Installation
+
+With =straight.el= and =use-package=:
+
+#+begin_src emacs-lisp
+(use-package ob-snowflake
+  :straight (:host github :repo "greshny/ob-snowflake")
+  :after org
+  :config
+  (require 'ob-snowflake))
+#+end_src
+
+* Usage
+
+Evaluate =snowflake= source blocks from Org:
+
+#+begin_src org
+,#+begin_src snowflake :connection default :database EXAMPLE_DB :schema PUBLIC :results output
+select current_user(), current_role(), current_warehouse();
+,#+end_src
+#+end_src
+
+Supported header arguments:
+
+- =:connection= - Snowflake CLI connection name
+- =:role= - role override
+- =:warehouse= - warehouse override
+- =:database= - database override
+- =:schema= - schema override
+- =:format= - Snowflake CLI output format, for example =TABLE=, =JSON=, =JSON_EXT=, or =CSV=
+
+* Configuration
+
+#+begin_src emacs-lisp
+(setq ob-snowflake-default-connection "default"
+      ob-snowflake-default-format "TABLE")
+#+end_src
+
+* License
+
+MIT
