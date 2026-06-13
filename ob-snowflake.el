@@ -5,7 +5,7 @@
 ;; Author: Roman Greschni
 ;; Maintainer: Roman Greschni
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "27.1") (org "9.5"))
+;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: outlines, processes, tools, sql
 ;; URL: https://github.com/greshny/ob-snowflake
 ;; SPDX-License-Identifier: MIT

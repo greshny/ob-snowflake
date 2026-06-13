@@ -75,6 +75,22 @@ With =straight.el= and =use-package=:
   (require 'ob-snowflake))
 #+end_src
 
+With Emacs 30 or newer, use the built-in =package-vc= integration through
+=use-package= =:vc=:
+
+#+begin_src emacs-lisp
+(use-package ob-snowflake
+  :vc (:url "https://github.com/greshny/ob-snowflake"
+       :rev :newest)
+  :after org
+  :config
+  (require 'ob-snowflake))
+#+end_src
+
+=ob-snowflake= expects Org/Babel to be available from Emacs or from the
+user's existing Org installation. It does not force installation of a
+separate Org package.
+
 * Usage
 
 Evaluate =snowflake= source blocks from Org:
